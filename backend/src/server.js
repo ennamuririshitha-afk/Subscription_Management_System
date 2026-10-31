@@ -1,9 +1,11 @@
+
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const authRoutes = require("./routes/authRoutes");
+const customerRoutes = require("./routes/customerRoutes");
 
 const app = express();
 
@@ -33,6 +35,9 @@ app.get("/api/health", (req, res) => {
 
 // Authentication routes
 app.use("/api/auth", authRoutes);
+
+// Customer management routes
+app.use("/api/customers", customerRoutes);
 
 // Dashboard routes
 app.use("/api/dashboard", dashboardRoutes);
