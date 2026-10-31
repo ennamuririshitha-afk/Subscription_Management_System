@@ -3,19 +3,20 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
-// Import routes
+// Import existing routes
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const authRoutes = require("./routes/authRoutes");
-<<<<<<< HEAD
 const customerRoutes = require("./routes/customerRoutes");
+
+// Product management
 const productRoutes = require("./modules/products/product.routes");
-=======
+
+// Billing and subscription management
 const quotationRoutes = require("./routes/quotationRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
 const invoiceRoutes = require("./routes/invoiceRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const reportRoutes = require("./routes/reportRoutes");
->>>>>>> origin/main
 
 const app = express();
 
@@ -46,8 +47,58 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Authentication
+// Authentication API
 app.use("/api/auth", authRoutes);
+
+// Customer management API
+app.use("/api/customers", customerRoutes);
+
+// Product management API
+app.use("/api/products", productRoutes);
+
+// Dashboard API
+app.use("/api/dashboard", dashboardRoutes);
+
+// Quotation API
+app.use("/api/quotations", quotationRoutes);
+
+// Subscription API
+app.use("/api/subscriptions", subscriptionRoutes);
+
+// Invoice API
+app.use("/api/invoices", invoiceRoutes);
+
+// Payment API
+app.use("/api/payments", paymentRoutes);
+
+// Reports API
+app.use("/api/reports", reportRoutes);
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "API endpoint not found",
+  });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error("Server Error:", err);
+
+  res.status(500).json({
+    success: false,
+    message: "Internal server error",
+  });
+});
+
+// Start server
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
+
 
 <<<<<<< HEAD
 // Customer management routes
