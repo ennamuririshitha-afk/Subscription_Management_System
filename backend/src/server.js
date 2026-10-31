@@ -6,6 +6,7 @@ require("dotenv").config();
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const authRoutes = require("./routes/authRoutes");
 const customerRoutes = require("./routes/customerRoutes");
+const productRoutes = require("./modules/products/product.routes");
 
 const app = express();
 
@@ -38,6 +39,9 @@ app.use("/api/auth", authRoutes);
 
 // Customer management routes
 app.use("/api/customers", customerRoutes);
+
+// Product management routes
+app.use("/api/products", productRoutes);
 
 // Dashboard routes
 app.use("/api/dashboard", dashboardRoutes);

@@ -1,5 +1,8 @@
+
 import React, { useEffect, useState, useCallback } from "react";
 import api from "./services/api";
+import ProductsPage from "./features/products/ProductsPage";
+import PlansPage from "./features/plans/PlansPage";
 
 const initialStats = [
   {
@@ -33,6 +36,7 @@ const initialStats = [
 ];
 
 function App() {
+  const [currentPage, setCurrentPage] = useState("dashboard");
   const [backendStatus, setBackendStatus] = useState("Checking...");
   const [stats, setStats] = useState(initialStats);
   const [loading, setLoading] = useState(false);
@@ -47,6 +51,8 @@ function App() {
       setBackendStatus(
         response.data.message || "Backend is running"
       );
+
+      setLastUpdated(new Date().toLocaleTimeString());
     } catch (error) {
       console.error("Backend connection error:", error);
       setBackendStatus("Backend connection failed");
@@ -63,6 +69,52 @@ function App() {
     checkBackend();
   };
 
+  const backButtonStyle = {
+    margin: "16px",
+    padding: "10px 18px",
+    background: "#2563eb",
+    color: "#ffffff",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontWeight: "600",
+  };
+
+  // Products page
+  if (currentPage === "products") {
+    return (
+      <>
+        <button
+          type="button"
+          onClick={() => setCurrentPage("dashboard")}
+          style={backButtonStyle}
+        >
+          ← Back to Dashboard
+        </button>
+
+        <ProductsPage />
+      </>
+    );
+  }
+
+  // Subscription Plans page
+  if (currentPage === "plans") {
+    return (
+      <>
+        <button
+          type="button"
+          onClick={() => setCurrentPage("dashboard")}
+          style={backButtonStyle}
+        >
+          ← Back to Dashboard
+        </button>
+
+        <PlansPage />
+      </>
+    );
+  }
+
+  // Main Dashboard
   return (
     <div className="app">
       <header className="topbar">
@@ -97,6 +149,7 @@ function App() {
           </span>
         </div>
 
+        {/* Dashboard Statistics */}
         <section className="stats-grid">
           {stats.map((item) => (
             <article className="stat-card" key={item.key}>
@@ -114,15 +167,37 @@ function App() {
           ))}
         </section>
 
+        {/* Quick Actions and Project Information */}
         <section className="content-grid">
           <article className="panel">
             <h3>Quick Actions</h3>
 
             <div className="action-list">
-              <button type="button">+ Create Subscription</button>
-              <button type="button">+ Add Customer</button>
-              <button type="button">+ Create Invoice</button>
-              <button type="button">+ Add Product</button>
+              <button type="button">
+                + Create Subscription
+              </button>
+
+              <button type="button">
+                + Add Customer
+              </button>
+
+              <button type="button">
+                + Create Invoice
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage("products")}
+              >
+                + Manage Products
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage("plans")}
+              >
+                + Manage Subscription Plans
+              </button>
             </div>
           </article>
 
@@ -136,6 +211,7 @@ function App() {
 
             <div className="info-row">
               <span>Backend API</span>
+
               <strong
                 className={
                   backendStatus === "Backend is running"
@@ -164,6 +240,7 @@ function App() {
           </article>
         </section>
 
+        {/* Recent Activity */}
         <section className="panel activity-panel">
           <div className="stat-header">
             <h3>Recent Activity</h3>
@@ -178,13 +255,16 @@ function App() {
           </div>
 
           <p>No activities available yet.</p>
+
           <small>
             Subscription and invoice activities will appear here
             once those modules are integrated.
           </small>
 
           {lastUpdated && (
-            <small>Last updated: {lastUpdated}</small>
+            <small>
+              Last updated: {lastUpdated}
+            </small>
           )}
         </section>
       </main>
