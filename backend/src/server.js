@@ -16,9 +16,6 @@ app.use(
 
 app.use(express.json());
 
-// Authentication routes
-app.use("/api/auth", authRoutes);
-
 // Root API
 app.get("/", (req, res) => {
   res.json({
@@ -33,6 +30,9 @@ app.get("/api/health", (req, res) => {
     message: "Backend is running",
   });
 });
+
+// Authentication routes
+app.use("/api/auth", authRoutes);
 
 // Dashboard routes
 app.use("/api/dashboard", dashboardRoutes);
