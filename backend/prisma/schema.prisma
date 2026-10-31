@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  ADMIN
+  STAFF
+  CUSTOMER
+}
+
+enum SubscriptionStatus {
+  DRAFT
+  QUOTATION
+  CONFIRMED
+  ACTIVE
+  PAUSED
+  CLOSED
+}
+
+enum BillingCycle {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+enum InvoiceStatus {
+  DRAFT
+  CONFIRMED
+  PAID
+  CANCELLED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  password     String
+  role         UserRole @default(CUSTOMER)
+  createdAt    DateTime @default(now())
+  subscriptions Subscription[]
+  invoices     Invoice[]
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  type        String?
+  salesPrice  Decimal  @db.Decimal(12, 2)
+  costPrice   Decimal  @db.Decimal(12, 2)
+  description String?
+  createdAt   DateTime @default(now())
+  plans       Plan[]
+}
+
+model Plan {
+  id          String      @id @default(uuid())
+  name        String
+  cycle       BillingCycle
+  price       Decimal     @db.Decimal(12, 2)
+  productId   String
+  product     Product     @relation(fields: [productId], references: [id])
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id        String             @id @default(uuid())
+  status    SubscriptionStatus @default(DRAFT)
+  startDate DateTime
+  endDate   DateTime?
+  userId    String
+  planId    String
+  user      User               @relation(fields: [userId], references: [id])
+  plan      Plan               @relation(fields: [planId], references: [id])
+  invoices  Invoice[]
+  createdAt DateTime           @default(now())
+}
+
+model Invoice {
+  id             String        @id @default(uuid())
+  invoiceNumber  String        @unique
+  amount         Decimal       @db.Decimal(12, 2)
+  status         InvoiceStatus @default(DRAFT)
+  dueDate        DateTime?
+  userId         String
+  subscriptionId String?
+  user           User          @relation(fields: [userId], references: [id])
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  createdAt      DateTime      @default(now())
+}
