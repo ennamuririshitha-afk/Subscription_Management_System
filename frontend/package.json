@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0ef4991 (feat: add initial subscription dashboard)
 {
   "name": "subscription-management-frontend",
   "private": true,
@@ -22,4 +25,8 @@
     "@vitejs/plugin-react": "^4.3.4",
     "vite": "^6.0.7"
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 0ef4991 (feat: add initial subscription dashboard)

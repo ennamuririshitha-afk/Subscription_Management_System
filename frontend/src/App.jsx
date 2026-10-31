@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0ef4991 (feat: add initial subscription dashboard)
 import React from "react";
 
 const dashboardStats = [
@@ -110,4 +113,8 @@ function App() {
   );
 }
 
+<<<<<<< HEAD
 export default App;
+=======
+export default App;
+>>>>>>> 0ef4991 (feat: add initial subscription dashboard)
