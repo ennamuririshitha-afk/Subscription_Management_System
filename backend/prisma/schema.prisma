@@ -37,15 +37,32 @@ enum InvoiceStatus {
   CANCELLED
 }
 
+enum QuotationStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  UPI
+  BANK_TRANSFER
+  OTHER
+}
+
 model User {
-  id           String   @id @default(uuid())
-  name         String
-  email        String   @unique
-  password     String
-  role         UserRole @default(CUSTOMER)
-  createdAt    DateTime @default(now())
+  id            String         @id @default(uuid())
+  name          String
+  email         String         @unique
+  password      String
+  role          UserRole       @default(CUSTOMER)
+  createdAt     DateTime       @default(now())
   subscriptions Subscription[]
-  invoices     Invoice[]
+  invoices      Invoice[]
+  quotations    Quotation[]
 }
 
 model Product {
@@ -60,26 +77,28 @@ model Product {
 }
 
 model Plan {
-  id          String      @id @default(uuid())
-  name        String
-  cycle       BillingCycle
-  price       Decimal     @db.Decimal(12, 2)
-  productId   String
-  product     Product     @relation(fields: [productId], references: [id])
+  id            String         @id @default(uuid())
+  name          String
+  cycle         BillingCycle
+  price         Decimal        @db.Decimal(12, 2)
+  productId     String
+  product       Product        @relation(fields: [productId], references: [id])
   subscriptions Subscription[]
+  quotations    Quotation[]
 }
 
 model Subscription {
-  id        String             @id @default(uuid())
-  status    SubscriptionStatus @default(DRAFT)
-  startDate DateTime
-  endDate   DateTime?
-  userId    String
-  planId    String
-  user      User               @relation(fields: [userId], references: [id])
-  plan      Plan               @relation(fields: [planId], references: [id])
-  invoices  Invoice[]
-  createdAt DateTime           @default(now())
+  id              String             @id @default(uuid())
+  status          SubscriptionStatus @default(DRAFT)
+  startDate       DateTime
+  endDate         DateTime?
+  nextBillingDate DateTime?
+  userId          String
+  planId          String
+  user            User               @relation(fields: [userId], references: [id])
+  plan            Plan               @relation(fields: [planId], references: [id])
+  invoices        Invoice[]
+  createdAt       DateTime           @default(now())
 }
 
 model Invoice {
@@ -92,5 +111,31 @@ model Invoice {
   subscriptionId String?
   user           User          @relation(fields: [userId], references: [id])
   subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  payments       Payment[]
   createdAt      DateTime      @default(now())
+}
+
+model Quotation {
+  id              String          @id @default(uuid())
+  quotationNumber String          @unique
+  amount          Decimal         @db.Decimal(12, 2)
+  status          QuotationStatus @default(DRAFT)
+  validUntil      DateTime?
+  notes           String?
+  userId          String
+  planId          String?
+  user            User            @relation(fields: [userId], references: [id])
+  plan            Plan?           @relation(fields: [planId], references: [id])
+  createdAt       DateTime        @default(now())
+}
+
+model Payment {
+  id          String        @id @default(uuid())
+  amount      Decimal       @db.Decimal(12, 2)
+  method      PaymentMethod @default(OTHER)
+  reference   String?
+  paymentDate DateTime      @default(now())
+  invoiceId   String
+  invoice     Invoice       @relation(fields: [invoiceId], references: [id])
+  createdAt   DateTime      @default(now())
 }
