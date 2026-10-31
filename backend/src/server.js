@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const authRoutes = require("./routes/authRoutes");
+
 const app = express();
 
 app.use(
@@ -14,9 +15,6 @@ app.use(
 );
 
 app.use(express.json());
-
-// Authentication routes
-app.use("/api/auth", authRoutes);
 
 // Root API
 app.get("/", (req, res) => {
@@ -33,9 +31,11 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+// Authentication routes
+app.use("/api/auth", authRoutes);
+
 // Dashboard routes
 app.use("/api/dashboard", dashboardRoutes);
-app.use("/api/auth", authRoutes);
 
 const PORT = process.env.PORT || 5000;
 
